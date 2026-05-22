@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>参加者プロフィール｜生きるためのリアル教科書</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --dark: #111318;
+    --card: #161b22;
+    --border: #2a2f3a;
+    --gold: #c9a84c;
+    --gold-light: #e8c96a;
+    --green: #2d6a4f;
+    --green-light: #52b788;
+    --white: #f0ece4;
+    --gray: #8892a4;
+    --accent: #c9a84c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--black);
+    color: var(--white);
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* NOISE TEXTURE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    overflow: hidden;
+    background: linear-gradient(160deg, #0a0e14 0%, #0d1a14 50%, #0a0a0a 100%);
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0; right: 0;
+    height: 120px;
+    background: linear-gradient(to bottom, transparent, var(--black));
+    pointer-events: none;
+  }
+
+  /* Grid lines decoration */
+  .grid-lines {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  .glow-orb {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(45,106,79,0.15) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--gold);
+    letter-spacing: 0.3em;
+    margin-bottom: 1.5rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .hero-tag::before,
+  .hero-tag::after {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.5;
+  }
+
+  .hero-date {
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: var(--green-light);
+    letter-spacing: 0.2em;
+    margin-bottom: 1rem;
+    animation: fadeUp 0.8s 0.1s ease both;
+    position: relative;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 6vw, 4.5rem);
+    font-weight: 700;
+    line-height: 1.15;
+    text-align: center;
+    color: var(--white);
+    position: relative;
+    animation: fadeUp 0.8s 0.15s ease both;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .hero-sub {
+    font-size: 0.82rem;
+    color: var(--gray);
+    letter-spacing: 0.15em;
+    text-align: center;
+    margin-top: 0.8rem;
+    animation: fadeUp 0.8s 0.2s ease both;
+    position: relative;
+  }
+
+  .hero-divider {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    margin: 2.5rem auto 0;
+    animation: fadeUp 0.8s 0.3s ease both;
+    position: relative;
+  }
+
+  /* COLLAB BADGE */
+  .collab-badge {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(201,168,76,0.08);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 999px;
+    padding: 0.6rem 1.5rem;
+    margin-top: 2rem;
+    animation: fadeUp 0.8s 0.25s ease both;
+    position: relative;
+  }
+
+  .collab-badge span {
+    font-size: 0.78rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    font-weight: 500;
+  }
+
+  .collab-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: pulse 2s ease infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  /* HOSTS SECTION */
+  .hosts-section {
+    padding: 5rem 1.5rem 3rem;
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .section-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.3em;
+    color: var(--green-light);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.6rem, 4vw, 2.5rem);
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 2.5rem;
+  }
+
+  .hosts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 5rem;
+  }
+
+  .host-card {
+    background: linear-gradient(135deg, rgba(201,168,76,0.08), rgba(45,106,79,0.06));
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 16px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .host-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px rgba(201,168,76,0.1);
+  }
+
+  .host-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--green-light), var(--gold));
+  }
+
+  .host-role {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+  }
+
+  .host-name-jp {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 0.2rem;
+  }
+
+  .host-name-en {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--gray);
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+  }
+
+  .host-company {
+    font-size: 0.78rem;
+    color: var(--green-light);
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+  }
+
+  .host-bio {
+    font-size: 0.78rem;
+    color: var(--gray);
+    line-height: 1.7;
+  }
+
+  /* PARTICIPANTS SECTION */
+  .participants-section {
+    padding: 2rem 1.5rem 6rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .participants-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .participant-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.4rem;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .participant-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--green), var(--gold));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  .participant-card:hover {
+    border-color: rgba(201,168,76,0.3);
+    background: #1a2030;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  }
+
+  .participant-card:hover::after {
+    transform: scaleX(1);
+  }
+
+  .participant-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.7rem;
+    color: rgba(201,168,76,0.5);
+    letter-spacing: 0.15em;
+    margin-bottom: 0.6rem;
+  }
+
+  .participant-name {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 0.3rem;
+    line-height: 1.3;
+  }
+
+  .participant-company {
+    font-size: 0.73rem;
+    color: var(--gray);
+    line-height: 1.5;
+  }
+
+  .participant-type {
+    display: inline-block;
+    margin-top: 0.75rem;
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-weight: 500;
+  }
+
+  .type-biz {
+    background: rgba(82,183,136,0.12);
+    color: var(--green-light);
+    border: 1px solid rgba(82,183,136,0.2);
+  }
+
+  .type-fin {
+    background: rgba(201,168,76,0.1);
+    color: var(--gold);
+    border: 1px solid rgba(201,168,76,0.2);
+  }
+
+  .type-emp {
+    background: rgba(100,120,180,0.12);
+    color: #8ab4f8;
+    border: 1px solid rgba(100,120,180,0.2);
+  }
+
+  /* ADMIN */
+  .admin-section {
+    max-width: 900px;
+    margin: 0 auto 4rem;
+    padding: 0 1.5rem;
+  }
+
+  .admin-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px dashed rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 2rem;
+  }
+
+  .admin-title {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    color: var(--gray);
+    margin-bottom: 1.25rem;
+    text-transform: uppercase;
+  }
+
+  .admin-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  @media (max-width: 500px) {
+    .admin-form { grid-template-columns: 1fr; }
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--gray);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.3rem;
+    text-transform: uppercase;
+  }
+
+  .form-group input, .form-group select {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem 0.9rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.85rem;
+    color: var(--white);
+    outline: none;
+    transition: border 0.2s;
+  }
+
+  .form-group input:focus, .form-group select:focus {
+    border-color: var(--gold);
+  }
+
+  .form-group select option { background: var(--dark); }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.6rem;
+    border-radius: 8px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    margin-top: 0.75rem;
+  }
+
+  .btn-gold {
+    background: linear-gradient(135deg, var(--gold), #a87c2a);
+    color: var(--black);
+  }
+
+  .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.3); }
+
+  .status-msg {
+    font-size: 0.82rem;
+    color: var(--gray);
+    margin-top: 0.75rem;
+    min-height: 1.2em;
+  }
+
+  .status-msg.ok { color: var(--green-light); }
+  .status-msg.err { color: #f28b82; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 3rem 1.5rem;
+    text-align: center;
+    position: relative;
+  }
+
+  footer .f-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  footer p { font-size: 0.78rem; color: var(--gray); line-height: 1.8; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  /* REMOVE BTN */
+  .remove-btn {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.15);
+    cursor: pointer;
+    font-size: 0.8rem;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  .remove-btn:hover { color: #f28b82; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="grid-lines"></div>
+  <div class="glow-orb"></div>
+
+  <div class="hero-date">2026.05.29 FRI — 松本初開催</div>
+  <div class="hero-tag">Special Seminar & Meetup</div>
+  <h1 class="hero-title">生きるための<br><em>リアル教科書</em></h1>
+  <p class="hero-sub">「健康」と「保険」の思い込みを捨てる日</p>
+
+  <div class="collab-badge">
+    <div class="collab-dot"></div>
+    <span>元がん病棟ナースFP × 希少がんサバイバー</span>
+    <div class="collab-dot"></div>
+  </div>
+
+  <div class="hero-divider"></div>
+</div>
+
+<!-- HOSTS -->
+<div class="hosts-section">
+  <div class="reveal">
+    <div class="section-label">Special Guest & Host</div>
+    <div class="section-title">登壇者</div>
+    <div class="hosts-grid">
+      <!-- 梅田さん -->
+      <div class="host-card">
+        <div class="host-role">✦ SPECIAL GUEST · FROM TOKYO</div>
+        <div class="host-name-jp">梅田 和希</div>
+        <div class="host-name-en">Kazuki Umeda</div>
+        <div class="host-company">独立系ファイナンシャルプランナー</div>
+        <div class="host-bio">元がん病棟看護師という異色の経歴を持つ独立系FP。NPO法人JIYUの評議員として運営に参画。国内のみならず海外ボランティアにも積極的に携わり、国境を越えた社会貢献活動を実践。</div>
+        <div style="margin-top:1rem;"><a href="https://www.facebook.com/profile.php?id=100070931366183&sk=about_contact_and_basic_info" target="_blank" style="font-size:0.72rem;color:var(--gold);text-decoration:none;letter-spacing:0.05em;opacity:0.8;">▶ Facebook</a></div>
+      </div>
+      <!-- さきちゃん -->
+      <div class="host-card">
+        <div class="host-role">✦ HOST · MATSUMOTO</div>
+        <div class="host-name-jp">増澤 紗希子</div>
+        <div class="host-name-en">Sakiko Masuzawa</div>
+        <div class="host-company">SakiBlanche 代表<br>一般社団法人日本足圧健美心協会 代表理事</div>
+        <div class="host-bio">希少がん（肛門がん）サバイバー。足圧セラピストとして独自メソッドを確立し法人化。自身のストーリーを武器に講演家としても全国で活動中。</div>
+        <div style="margin-top:1rem;"><a href="https://www.facebook.com/tsubaki.saki.camellia/photos" target="_blank" style="font-size:0.72rem;color:var(--gold);text-decoration:none;letter-spacing:0.05em;opacity:0.8;">▶ Facebook</a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PARTICIPANTS -->
+  <div class="reveal">
+    <div class="section-label">Participants</div>
+    <div class="section-title">交流会 参加者</div>
+    <div class="status-msg" id="statusMsg"></div>
+    <div class="participants-grid" id="participantsGrid"></div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="admin-section reveal">
+  <div class="admin-box">
+    <div id="adminLock">
+      <div class="admin-title">⚙ 管理者ログイン</div>
+      <div class="admin-form" style="grid-template-columns:1fr auto;align-items:end;">
+        <div class="form-group">
+          <label>パスワード</label>
+          <input type="password" id="adminPass" placeholder="パスワードを入力" onkeydown="if(event.key==='Enter')checkPass()" />
+        </div>
+        <button class="btn btn-gold" onclick="checkPass()" style="margin-top:0;">ログイン</button>
+      </div>
+      <div class="status-msg err" id="passError"></div>
+    </div>
+    <div id="adminPanel" style="display:none;">
+      <div class="admin-title">⚙ 参加者を追加（管理者用）</div>
+      <div class="admin-form">
+        <div class="form-group">
+          <label>名前 *</label>
+          <input type="text" id="addName" placeholder="山田 太郎" />
+        </div>
+        <div class="form-group">
+          <label>会社名</label>
+          <input type="text" id="addCompany" placeholder="株式会社〇〇" />
+        </div>
+        <div class="form-group">
+          <label>肩書き</label>
+          <select id="addType">
+            <option value="biz">経営者・個人事業主</option>
+            <option value="emp">会社員</option>
+            <option value="fin">保険・金融関係</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>FacebookリンクURL</label>
+          <input type="text" id="addSns" placeholder="https://www.facebook.com/..." />
+        </div>
+      </div>
+      <button class="btn btn-gold" onclick="addManual()">＋ 追加する</button>
+      <div class="status-msg" id="addStatus"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="f-title">生きるためのリアル教科書</div>
+  <p>2026年5月29日（金）16:00〜<br>
+  燎〜かがりび〜｜松本市中央1丁目15-25 アメニティーホール2階</p>
+</footer>
+
+<script>
+// 肩書きラベル
+const typeLabels = {
+  biz: '経営者・個人事業主',
+  emp: '会社員',
+  fin: '保険・金融関係'
+};
+
+const typeClass = {
+  biz: 'type-biz',
+  emp: 'type-emp',
+  fin: 'type-fin'
+};
+
+// 初期参加者（交流会参加 13名）
+let participants = [
+  { name: '廣田峻平', company: '自営業・フリーランス', type: 'biz', sns: 'https://www.facebook.com/profile.php?id=100011421963411' },
+  { name: '須山理恵', company: '会社員', type: 'emp', sns: 'https://www.facebook.com/rie.suyama.1' },
+  { name: '福田佑', company: '株式会社J CONCEPT', type: 'emp', sns: 'https://www.instagram.com/kiki.headspa' },
+  { name: '大野 透', company: '（株）FRA', type: 'biz', sns: 'https://www.facebook.com/tooru.ohno.10' },
+  { name: '望月國平', company: '株式会社 天美CREATE', type: 'biz', sns: '' },
+  { name: '横山 智博', company: '株式会社 T・Pono', type: 'biz', sns: 'https://www.facebook.com/tomohiro.yokoyama.7545' },
+  { name: '栗林諒', company: '株式ライフプラザパートナーズ', type: 'emp', sns: 'https://www.facebook.com/Ryokyuudou163' },
+  { name: '長嶺忠洋', company: '株式会社プリントショップ', type: 'biz', sns: 'https://www.facebook.com/profile.php?id=61561339491224' },
+  { name: '宇野望', company: 'Lino', type: 'biz', sns: 'https://www.facebook.com/profile.php?id=61571035165253' },
+  { name: '千國健太郎', company: '保険・金融関係', type: 'fin', sns: '' },
+  { name: '望月里美', company: '保険・金融関係', type: 'fin', sns: '' },
+  { name: '滝澤 雅大', company: 'soft keys', type: 'biz', sns: 'https://www.facebook.com/profile.php?id=100004386900643' },
+  { name: '井原由貴', company: '経営者・個人事業主', type: 'biz', sns: 'https://www.facebook.com/profile.php?id=61558923599154' },
+  { name: '柳澤 敏子', company: '愛流', type: 'biz', sns: '' },
+];
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function render() {
+  const grid = document.getElementById('participantsGrid');
+  if (!participants.length) {
+    grid.innerHTML = `<div style="color:var(--gray);font-size:0.85rem;grid-column:1/-1;padding:2rem 0;">まだ参加者がいません</div>`;
+    return;
+  }
+  grid.innerHTML = participants.map((p, i) => `
+    <div class="participant-card" style="animation-delay:${i * 0.05}s">
+      <button class="remove-btn" onclick="remove(${i})" title="削除">✕</button>
+      <div class="participant-num">No.${String(i+1).padStart(2,'0')}</div>
+      <div class="participant-name">${escHtml(p.name)}</div>
+      <div class="participant-company">${escHtml(p.company)}</div>
+      <span class="participant-type ${typeClass[p.type] || 'type-biz'}">${escHtml(typeLabels[p.type] || p.type)}</span>
+      ${p.sns ? `<div style="margin-top:0.75rem;"><a href="${escHtml(p.sns)}" target="_blank" style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.68rem;color:var(--gold);text-decoration:none;letter-spacing:0.05em;opacity:0.8;transition:opacity 0.2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8">▶ ${p.sns.includes('instagram') ? 'Instagram' : 'Facebook'}</a></div>` : ''}
+    </div>
+  `).join('');
+}
+
+function remove(i) {
+  const name = participants[i].name;
+  participants.splice(i, 1);
+  render();
+  document.getElementById('statusMsg').textContent = `🗑 ${name} さんを削除しました`;
+}
+
+function checkPass() {
+  const pass = document.getElementById('adminPass').value;
+  if (pass === 'tsubaki6089') {
+    document.getElementById('adminLock').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+  } else {
+    document.getElementById('passError').textContent = 'パスワードが違います';
+  }
+}
+
+function addManual() {
+  const name = document.getElementById('addName').value.trim();
+  if (!name) { alert('名前を入力してください'); return; }
+  const company = document.getElementById('addCompany').value.trim();
+  const type = document.getElementById('addType').value;
+  const sns = document.getElementById('addSns').value.trim();
+  participants.push({ name, company, type, sns });
+  render();
+  document.getElementById('addName').value = '';
+  document.getElementById('addCompany').value = '';
+  document.getElementById('addSns').value = '';
+  document.getElementById('addStatus').textContent = `✅ ${name} さんを追加しました`;
+  document.getElementById('addStatus').className = 'status-msg ok';
+}
+
+// Scroll reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+render();
+</script>
+</body>
+</html>
